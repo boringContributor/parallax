@@ -1,0 +1,26 @@
+{
+  "name": "parallax",
+  "version": "1.0.0",
+  "description": "A live, data-driven 3D universe: satellites, missions, planets and the Milky Way",
+  "scripts": {
+    "data": "node scripts/fetch-data.mjs",
+    "predev": "node scripts/fetch-data.mjs",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "animejs": "^4.5.0",
+    "astronomy-engine": "^2.1.19",
+    "satellite.js": "^7.1.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1"
+  },
+  "private": true,
+  "type": "module"
+}
