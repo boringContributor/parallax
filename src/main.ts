@@ -11,6 +11,7 @@ import { Labels } from './core/labels';
 import { shared } from './core/shaders';
 import { json, texture, type EventsData, type LaunchesData, type StarsData } from './core/data';
 import { MISSIONS } from './core/missions';
+import { loadEvents, loadLaunches } from './core/live';
 import type { Layer, LayerId, Selectable } from './core/types';
 import { Sky } from './layers/sky';
 import { EarthLayer } from './layers/earth';
@@ -193,7 +194,7 @@ function refreshNav() {
 function feedFor(layer: Layer) {
   if (layer.id === 'earth') {
     const e = layer as EarthLayer;
-    return earthFeed(launches, events, e.sats.length, e.satsFetched, e.satsPartial);
+    return earthFeed(launches, events, e.sats.length, e.satsFetched, e.satsPartial, e.satsLive);
   }
   if (layer.id === 'solar') {
     const list = Object.entries(MISSIONS).filter(([id]) => (layers.solar as SolarLayer).selectables().some((s) => s.id === 'mission:' + id))
@@ -362,7 +363,7 @@ async function boot() {
     texture('milkyway.jpg'), json<StarsData>('stars.json'), json<number[][][]>('constellations.json'),
   ]);
   const sky = new Sky(mw, stars, constellations);
-  [events, launches] = await Promise.all([json<EventsData>('events.json').catch(() => null), json<LaunchesData>('launches.json').catch(() => null)]);
+  [events, launches] = await Promise.all([loadEvents(), loadLaunches()]);
 
   for (const id of ['earth', 'solar', 'galaxy'] as LayerId[]) labelSets[id] = new Labels(labelHost);
   const earth = new EarthLayer(sky, labelSets.earth);

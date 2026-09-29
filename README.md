@@ -9,6 +9,8 @@ npm install
 npm run dev      # fetches/refreshes open data into public/, then starts Vite
 ```
 
+`npm run build` runs the same fetch first (`prebuild`), so any host that builds from git (Vercel, Netlify, Cloudflare Pages, GitHub Actions) ships fresh data. Static catalogues and textures are committed in `public/`. Live feeds are fetched at build time and refreshed again in the browser: satellites from CelesTrak, launches from Launch Library 2, space weather from NASA DONKI. The build snapshot is the fallback. JPL data (missions, asteroids) has no CORS, so those come from the last build. Set `VITE_NASA_API_KEY` (free at api.nasa.gov) to avoid the rate-limited `DEMO_KEY`.
+
 `npm run data` refreshes the data on its own. Live feeds refresh when they are more than 2 h old. Catalogues and textures are downloaded once. Use `--force` to re-download everything, or `--only=satellites,missions` for specific feeds.
 
 ## Modes

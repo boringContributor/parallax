@@ -6,6 +6,7 @@
     "data": "node scripts/fetch-data.mjs",
     "predev": "node scripts/fetch-data.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/fetch-data.mjs",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc"

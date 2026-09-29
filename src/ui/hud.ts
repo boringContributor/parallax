@@ -229,14 +229,14 @@ export class Hud {
 }
 
 // ------------------------------------------------------------------------------------------ feed builders
-export function earthFeed(l: LaunchesData | null, ev: EventsData | null, satCount: number, fetched: string, partial: boolean) {
+export function earthFeed(l: LaunchesData | null, ev: EventsData | null, satCount: number, fetched: string, partial: boolean, live: boolean) {
   const launches = (l?.launches || []).filter((x) => Date.parse(x.net) > Date.now() - 3 * 36e5).slice(0, 5);
   const strongest = (ev?.flares || []).reduce<string | null>((best, f) => (!best || cls(f.cls) > cls(best) ? f.cls : best), null);
   const fastCme = (ev?.cmes || []).reduce((m, c) => Math.max(m, c.speed || 0), 0);
   return `
     <div class="card stat"><div class="big" data-count="${satCount}">${satCount.toLocaleString('en-US')}</div>
       <div class="lbl">active satellites propagated live with SGP4${partial ? ' <em>(partial catalogue — full set on next refresh)</em>' : ''}</div>
-      <div class="src">CelesTrak · ${timeAgo(fetched)}</div></div>
+      <div class="src">CelesTrak · ${live ? 'elements fetched live' : 'snapshot ' + timeAgo(fetched)}</div></div>
     ${launches.length ? `<div class="card"><h4>Next launches</h4>${launches.map((x) => `
       <div class="row" data-sel="${esc(x.name)}"><span class="cd">${countdown(x.net)}</span><span class="nm">${esc(x.name.split('|').pop()!.trim())}<small>${esc(x.rocket || '')} · ${esc(x.location?.split(',').slice(-1)[0]?.trim() || '')}</small></span></div>`).join('')}
       <div class="src">Launch Library 2 · The Space Devs</div></div>` : ''}

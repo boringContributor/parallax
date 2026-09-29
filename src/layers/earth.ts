@@ -3,7 +3,8 @@ import * as Astronomy from 'astronomy-engine';
 import { gstime, json2satrec, sgp4, eciToGeodetic, type SatRec } from 'satellite.js';
 import { AU_KM, toThree, dateFromJd, formatDistance } from '../core/astro';
 import { material, V_PARS, V_END, F_PARS, F_START } from '../core/shaders';
-import { json, texture, type SatellitesData, type MissionsData, type LaunchesData, type Launch, type MissionTrack } from '../core/data';
+import { json, texture, type SatellitesData, type MissionsData, type Launch, type MissionTrack } from '../core/data';
+import { loadSatellites, loadLaunches } from '../core/live';
 import { MISSIONS } from '../core/missions';
 import { sampleTrack } from '../core/track';
 import { sunGlow, ringTexture } from '../core/fx';
@@ -77,6 +78,7 @@ export class EarthLayer implements Layer {
   private selectables_: Selectable[] = [];
   satsFetched = '';
   satsPartial = false;
+  satsLive = false;
   launches: Launch[] = [];
 
   constructor(private sky: Sky, private labels: Labels) {}
@@ -93,10 +95,11 @@ export class EarthLayer implements Layer {
 
     progress?.('Satellite catalogue (CelesTrak)');
     const [satData, missions, launches] = await Promise.all([
-      json<SatellitesData>('satellites.json'),
+      loadSatellites(),
       json<MissionsData>('missions.json').catch(() => null),
-      json<LaunchesData>('launches.json').catch(() => null),
+      loadLaunches(),
     ]);
+    this.satsLive = satData.live;
     await this.buildSatellites(satData);
     if (missions) this.buildDeepSpace(missions);
     if (launches) this.buildLaunchPads(launches.launches);

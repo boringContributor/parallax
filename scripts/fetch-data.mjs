@@ -14,6 +14,7 @@ const TEX = path.join(ROOT, 'public/textures');
 const FORCE = process.argv.includes('--force');
 const ONLY = (process.argv.find((a) => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean);
 const LIVE_MAX_AGE = 2 * 3600 * 1000;
+const NASA_KEY = process.env.NASA_API_KEY || process.env.VITE_NASA_API_KEY || 'DEMO_KEY';
 const UA = { 'User-Agent': 'space-viz/0.1 (open data visualisation)' };
 
 const log = (...a) => console.log('  ·', ...a);
@@ -207,11 +208,11 @@ const jobs = {
     const d = (days) => new Date(Date.now() + days * 864e5).toISOString().slice(0, 10);
     const res = { fetched: new Date().toISOString() };
     try {
-      const flares = await get(`https://api.nasa.gov/DONKI/FLR?startDate=${d(-30)}&endDate=${d(0)}&api_key=DEMO_KEY`, { type: 'json' });
+      const flares = await get(`https://api.nasa.gov/DONKI/FLR?startDate=${d(-30)}&endDate=${d(0)}&api_key=${NASA_KEY}`, { type: 'json' });
       res.flares = flares.map((f) => ({ peak: f.peakTime, cls: f.classType, region: f.activeRegionNum })).reverse();
     } catch (e) { log('events: flares', e.message); }
     try {
-      const cme = await get(`https://api.nasa.gov/DONKI/CMEAnalysis?startDate=${d(-30)}&endDate=${d(0)}&mostAccurateOnly=true&api_key=DEMO_KEY`, { type: 'json' });
+      const cme = await get(`https://api.nasa.gov/DONKI/CMEAnalysis?startDate=${d(-30)}&endDate=${d(0)}&mostAccurateOnly=true&api_key=${NASA_KEY}`, { type: 'json' });
       res.cmes = cme.map((c) => ({ time: c.time21_5, speed: c.speed, type: c.type, halfAngle: c.halfAngle })).reverse();
     } catch (e) { log('events: cme', e.message); }
     try {

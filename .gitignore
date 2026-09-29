@@ -1,5 +1,10 @@
 node_modules
 dist
-public/data
-public/textures
+# live feeds are fetched at build time (npm run build → prebuild) and refreshed in the browser;
+# static catalogues and textures in public/ are committed
+public/data/satellites.json
+public/data/missions.json
+public/data/launches.json
+public/data/events.json
+public/data/manifest.json
 .DS_Store
